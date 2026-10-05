@@ -2,87 +2,55 @@
 
 **Understand your air. Before it affects you.**
 
-A responsive environmental-intelligence demo connecting current conditions → possible contributors → trend → prediction → best time → recommendation.
-
-> **Data honesty:** this project is Demo Mode by default. City readings, weather, timeline series, prediction series and history examples are deterministic fixtures; they are never presented as live. Predictions are illustrative, not a trained model. History entries are not verified incidents or sources.
+A responsive environmental-intelligence dashboard for Chennai, Bengaluru, Hyderabad, Delhi and Mumbai. It connects location → current conditions → context → trend → prediction → recommendation.
 
 ## Run
 
-Open index.html directly, or serve the outputs folder with Python:
+Open `index.html` directly, or serve `outputs/` from a local static server. A server is recommended for network providers:
 
     python -m http.server 8000
 
-Then visit http://localhost:8000. The file-open route needs no server or network.
+Then visit `http://localhost:8000`. The dashboard is fully usable in Demo Mode without network access or API keys.
 
-## Product features
+## Data modes and sources
 
-- Landing page with a locally generated environmental signal visualization
-- Five deterministic city datasets: Chennai, Bengaluru, Hyderabad, Delhi and Mumbai
-- AQI, risk, change, pollutant breakdown, weather context and contributor indicators
-- Schematic clickable city map and map controls
-- Historical pollution charts with range and pollutant controls plus a labeled demo spike
-- Six-hour predicted AQI view, profile aware outdoor advisor, location comparison and recommendation engine
-- Clearly illustrative environmental history, accessible dialogs, responsive layout and dark mode
+- **LIVE MODEL DATA:** Open-Meteo Air Quality API (CAMS) returns hourly modelled AQI and pollutant estimates; it is not a ground-monitor observation. Open-Meteo Weather API supplies current model weather. Readings display the provider model time and source.
+- **PARTIAL MODEL DATA:** the air feed remains live when weather or expected fields are incomplete; missing values stay unavailable. Weather fixtures are identified as demo fallback.
+- **DEMO DATA:** stable fixtures for all five cities are used when the network/provider is unavailable, or when the user selects Demo Mode. They are deterministic and labelled.
+- **STALE MODEL DATA:** after a successful response, a later failed refresh keeps the last valid sample and marks it stale with its original model timestamp.
+- **PREDICTED:** the six-hour prediction and best-time advisor remain deterministic demo logic, not a trained or validated ML model and not an Open-Meteo forecast. There is no confidence percentage.
+- **DERIVED INSIGHT:** risk labels and general recommendations are simple rules based on the current displayed AQI. Contributor bars are contextual indicators, not causal measurements.
+- **DEMO HISTORY / DEMO COMPARISON:** environmental events, comparisons, and longer-than-24-hour charts use fixtures. The 24-hour pollutant chart uses Open-Meteo hourly model values when available; it does not claim monitor history. The anomaly marker is illustrative demo-only and is hidden on the live-model range.
+
+The live/demo toggle and refresh control are in the dashboard header. A browser without network access or where the provider is blocked by CORS continues in Demo Mode.
+
+## Providers and configuration
+
+`services.js` contains the provider boundary, normalization, per-city cache, stale handling, and deterministic fallback. The public Open-Meteo endpoints need no API key for non-commercial use. For deployment-specific endpoint URLs, set `window.AEROSENSE_CONFIG` **before** loading `services.js`:
+
+    window.AEROSENSE_CONFIG = {
+      openMeteoAirBaseUrl: "https://air-quality-api.open-meteo.com/v1/air-quality",
+      openMeteoWeatherBaseUrl: "https://api.open-meteo.com/v1/forecast"
+    };
+
+A static browser page cannot read `.env` files directly; production build/deployment tooling can inject these public endpoint values from environment variables. Never put private API keys in browser code. `.env.example` is a server/deployment template for future backend integrations.
 
 ## Project structure
 
-- index.html — landing screen and dashboard markup
-- styles.css — responsive visual system and chart/map styling
-- data.js — stable city, weather, historical, forecast and history fixtures
-- services.js — normalized service boundary and optional same-origin provider proxy with Demo Mode fallback
-- app.js — dashboard rendering, interactions, advisor and recommendations
-- favicon.svg — local AeroSense mark
-- .env.example — backend-only integration settings template
+- `index.html` — landing page and dashboard markup
+- `styles.css` — responsive layout, visual system, charts and schematic city map
+- `data.js` — deterministic city, weather, historic, forecast, and event fixtures
+- `services.js` — Open-Meteo integration, normalized models, graceful fallback and stale cache
+- `app.js` — rendering, location switching, controls, demo recommendations and navigation
+- `favicon.svg` — local AeroSense icon
+- `.env.example` — deployment/backend configuration template
 
-The empty starter repository had no app framework or installed project dependencies. This implementation uses plain HTML/CSS/JavaScript and local SVG so it opens as a file and runs without package installation, API keys, PostgreSQL or external map assets.
-
-## Data categories
-
-- **DEMO DATA:** every bundled observation, weather value, example history entry and timeline point.
-- **PREDICTED:** six-hour per-city demo forecasts and best-time AQI, fixed to keep the demo repeatable.
-- **DERIVED INSIGHT:** risk bands, simple deltas, contributor labels, anomaly presentation and recommendations based on fixture values.
-- **LIVE DATA:** none is currently connected. services.js is prepared to call a configured same-origin proxy but the UI remains in Demo Mode until a server provider and normalized response contract are implemented.
-
-The confidence percentage is illustrative and must not be understood as validated model confidence. Contributor indicators show association only, not causation. The anomaly is a deliberately included demo event, not a live statistical alert.
-
-## Services and real provider integration
-
-services.js separates UI-facing methods for city list, current air quality, weather, pollution history, prediction, environmental history and recommendation context. With no proxy configured, the deterministic fixtures keep every view available. To connect providers, add a backend proxy that normalizes responses to the fields used by data.js and app.js and sets AEROSENSE_CONFIG.apiBaseUrl in the page bootstrap. Keep secrets server-side.
-
-Potential provider integrations:
-
-- OpenAQ for air-quality observations, with attribution, units and timestamp validation.
-- Open-Meteo for weather and environmental context.
-- OpenStreetMap tiles with Leaflet for a geographically accurate map. The included map is a schematic illustration, not a geocoder or geographic map.
-- Verifiable public environmental event sources only. Demo history must not be mistaken for a real incident feed.
-
-Use .env.example as a server-side template. Never expose private keys via a static JavaScript file.
-
-## Prediction and anomaly methodology
-
-The present forecast is a deterministic six-value sequence per city. No scikit-learn model has been trained and no MAE, RMSE or R² claims are made. Production forecasts require sourced historical data, temporal holdout validation, a baseline comparison and calibrated intervals.
-
-The timeline spike is present as a demo visual. A future detector could evaluate percentage movement and rolling z-scores, require enough samples, record source/time, deduplicate alerts and distinguish detection from projected duration.
-
-## Backend and database
-
-There is no backend, API server or database in the runnable demo. This is deliberate for immediate demonstration. A future FastAPI layer can implement the proxy endpoints named in services.js. PostgreSQL is optional for stored observations/preferences; Demo Mode should continue to work without it.
-
-## Responsive demo walkthrough
-
-1. Load the landing page and choose Explore Air Quality.
-2. Switch cities with the selector or map markers; inspect AQI, pollutants and weather.
-3. Review possible contributors and the non-causality note.
-4. Change the trend horizon and pollutant; inspect the labeled spike.
-5. Review future predictions and select an activity profile.
-6. Compare locations, then read example history and tailored recommendations.
+The app uses plain HTML, CSS and JavaScript with no build step, backend, database, or package dependencies. Its map is a clickable schematic, not a geographic OSM/Leaflet map.
 
 ## Validation
-
-Run syntax checks with:
 
     node --check app.js
     node --check data.js
     node --check services.js
 
-No TypeScript or frontend production build is configured because this is a dependency-free static implementation. There is no lint configuration or automated test suite in this starter repository.
+There is no TypeScript, lint, or production bundler configured.
