@@ -122,7 +122,7 @@ window.AeroSenseServices=(()=>{
    const stale=window.AeroSensePrediction.normalize({...saved,status:"stale",source:"STALE FORECAST · Last valid Open-Meteo model output",values:saved.values},{now,timezoneOffset:"+05:30"});
    if(stale.values.length){predictionCache.set(key,stale);return stale}
   }
-  if(dataStatus==="stale")return predictionProviders.demo.load(name,pollutant,{...options,now});
+  if(dataStatus==="stale"||result.status==="unavailable")return predictionProviders.demo.load(name,pollutant,{...options,now});
   return result;
  }
  async function loadAeroSenseML(name,payload){
