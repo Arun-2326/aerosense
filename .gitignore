@@ -1,0 +1,8 @@
+backend/.venv/
+.venv/
+backend/.python-packages/
+backend/.tmp/
+backend/data/raw/
+backend/data/processed/
+__pycache__/
+*.py[cod]

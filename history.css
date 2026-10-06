@@ -1,0 +1,15 @@
+.chart-legend{align-items:flex-start;flex-wrap:wrap}
+.chart-legend #timelineSource{display:block;max-width:100%;line-height:1.4;overflow-wrap:anywhere}
+.chart-live-point{fill:#45a69b;stroke:#fff;stroke-width:2}
+.empty-chart{padding:10px;text-align:center}
+#anomalyCallout[hidden],#anomalyKey[hidden]{display:none}
+.forecast-legend{display:flex;align-items:center;gap:18px;flex-wrap:wrap;color:#8b999b;font-size:8px;margin:8px 0 2px}
+.forecast-legend span{display:flex;align-items:center;gap:6px}
+.observed-key,.forecast-key{display:inline-block;width:17px;height:2px;background:#42a39a}
+.forecast-key{height:0;border-top:2px dashed #9164b1;background:none}
+.forecast-status{font-weight:700;letter-spacing:.45px}
+.forecast-status-live{color:#338d68!important}.forecast-status-stale{color:#b77e32!important}.forecast-status-demo{color:#77888b!important}.forecast-status-unavailable{color:#b35d56!important}
+.forecast-chart{height:130px;position:relative}
+.forecast-grid{stroke:#edf1f1;stroke-width:1}.forecast-observed-line{fill:none;stroke:#42a39a;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.forecast-provider-line{fill:none;stroke:#9164b1;stroke-width:2.5;stroke-dasharray:6 5;stroke-linecap:round;stroke-linejoin:round}.forecast-transition{stroke:#99a8a9;stroke-width:1;stroke-dasharray:3 4}.forecast-point{stroke:#fff;stroke-width:2}.forecast-observed-point{fill:#42a39a}.forecast-future-point{fill:#9164b1}.forecast-axis{fill:#9aa7a9;font-size:8px;font-family:'DM Sans',sans-serif}
+.dark .forecast-grid{stroke:#2d4244}.dark .forecast-axis{fill:#99acad}.dark .forecast-legend{color:#9bacad}
+@media(max-width:560px){.forecast-legend{gap:7px 12px;font-size:7px}.forecast-chart{height:110px}.forecast-hours{grid-template-columns:repeat(3,1fr);row-gap:12px}.forecast-hour{min-height:34px}}

@@ -9,5 +9,18 @@
 .data-refresh{display:inline-flex;align-items:center;gap:6px}.refresh-symbol{font-size:12px;color:#258b80}.data-refresh:disabled{opacity:.55;cursor:wait}.data-mode-button{color:#187c74;font-weight:700}.data-mode-button:hover,.data-refresh:hover{border-color:#9dcac3;background:#f7fbfa}
 .demo-chip.status-live{color:#247b57}.demo-chip.status-live>span{background:#46a975}.demo-chip.status-partial{color:#a17724}.demo-chip.status-partial>span{background:#d3a239}.demo-chip.status-stale{color:#a15f43}.demo-chip.status-stale>span{background:#d68043}.demo-chip.status-loading>span{background:#62a9a2}
 .empty-chart{height:100%;display:grid;place-items:center;color:var(--muted);font-size:10px}
+.intelligence-factor{grid-template-columns:minmax(95px,1.1fr) minmax(50px,.8fr) auto;align-items:center;row-gap:4px}.intelligence-factor small{grid-column:1/-1;color:var(--muted);font-size:10px;line-height:1.45}.intelligence-empty{font-size:11px;color:var(--muted);padding:10px 0}.intelligence-outlook{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:14px 0 8px}.outlook-step{min-width:125px;display:grid;gap:5px;padding:9px 10px;border:1px solid var(--line);background:var(--surface-soft,#f8fbfb)}.outlook-step small{font-size:8px;letter-spacing:.08em;color:var(--muted)}.outlook-step b{font-size:14px;color:var(--ink)}.outlook-step span{font-size:8px;line-height:1.35;color:var(--muted)}.outlook-arrow{color:var(--muted);font-size:12px}.outlook-trend{flex:1;min-width:145px;margin:0;font-size:10px;line-height:1.5;color:var(--muted)}.outlook-trend b{display:block;color:var(--teal,#348f82);font-size:8px;letter-spacing:.06em}.worst-window{margin-top:10px;border-color:var(--line)}.advisor-provenance{display:inline-block;margin:3px 0 7px;font-size:8px;letter-spacing:.06em;color:var(--muted)}
+@media(max-width:600px){.intelligence-outlook{align-items:stretch}.outlook-step{min-width:112px}.outlook-trend{min-width:130px}}
 @media(max-width:850px){.data-mode-button{padding:6px 7px;font-size:8px}.top-actions{gap:8px}}
 @media(max-width:560px){.top-actions{gap:5px}.data-mode-button{font-size:7px;padding:5px 6px}.data-refresh{padding:5px 6px;font-size:0}.data-refresh .refresh-symbol{display:inline-block}.data-refresh #updatedLabel{display:none}.data-refresh{font-size:10px}.demo-chip{font-size:7px}.data-status{display:none}}
+ .ml-comparison{border-top:1px solid #dce5eb;margin-top:16px;padding-top:14px;display:grid;gap:8px;color:#506274;font-size:12px}
+ .ml-comparison[hidden]{display:none}
+ .ml-comparison> b{color:#23384a;font-size:11px;letter-spacing:.07em}
+ .ml-comparison p{margin:0;line-height:1.5}
+ .ml-comparison-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .ml-value{display:grid;gap:4px;border:1px solid #dce5eb;padding:10px 12px;background:#f8fbfc}
+ .ml-value span{font-size:10px;letter-spacing:.06em;font-weight:700;color:#527083}
+ .ml-value b{font-size:18px;color:#142c3d}
+ .ml-value small,.ml-comparison>small{font-size:10px;line-height:1.5;color:#667987}
+ .ml-unavailable{font-size:11px;color:#94691a}
+ .ml-provenance{border-top:1px dashed #dce5eb;padding-top:7px}
