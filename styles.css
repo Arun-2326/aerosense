@@ -838,12 +838,15 @@ button {
   min-height: 124px;
   position: relative;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px;
+  grid-template-rows: auto auto auto;
+  align-content: space-between;
 }
 
 .poll-top {
+  grid-column: 1 / -1;
+  grid-row: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -867,6 +870,8 @@ button {
 }
 
 .poll-value {
+  grid-column: 1 / -1;
+  grid-row: 2;
   font-family: "Manrope", sans-serif;
   font-size: 22px;
   font-weight: 800;
@@ -885,12 +890,25 @@ button {
 }
 
 .poll-change {
-  display: flex;
-  justify-content: space-between;
+  grid-column: 1;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 6px;
   align-items: center;
+  min-width: 0;
   color: #67787d;
   font-size: 11px;
   margin-top: 6px;
+}
+
+.poll-change span:first-child {
+  white-space: nowrap;
+}
+
+.poll-change span:last-child {
+  min-width: 0;
+  white-space: normal;
 }
 
 .trend-up {
@@ -904,12 +922,21 @@ button {
 }
 
 .spark {
-  position: absolute;
-  right: 10px;
-  bottom: 8px;
-  width: 60px;
-  height: 24px;
+  grid-column: 2;
+  grid-row: 3;
+  align-self: end;
+  justify-self: end;
+  width: 52px;
+  height: 22px;
   opacity: 0.75;
+}
+
+.pollutant-card > .trend-unavailable {
+  grid-column: 2;
+  grid-row: 3;
+  justify-self: end;
+  align-self: end;
+  text-align: right;
 }
 
 /* Lower Grid (Why changing & Timeline) */
@@ -2743,6 +2770,18 @@ button {
   .pollutant-grid {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+  }
+  .pollutant-card {
+    grid-template-rows: auto auto auto auto;
+  }
+  .poll-change {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  .spark,
+  .pollutant-card > .trend-unavailable {
+    grid-column: 2;
+    grid-row: 4;
   }
   .forecast-hours {
     grid-template-columns: repeat(3, 1fr);
