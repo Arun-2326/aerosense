@@ -228,7 +228,7 @@ window.AeroSenseServices=(()=>{
   }
  }
  function mapSnapshot(name,options={}){const d=city(name),p=options.demo?null:cache.get(name);if(!p)return {city:name,latitude:d.latitude,longitude:d.longitude,aqi:d.aqi,status:"demo",source:"DEMO DATA"};return {city:name,latitude:d.latitude,longitude:d.longitude,aqi:p.air.aqi,status:p.status==="stale"?"stale":p.status==="demo"?"demo":p.status==="partial"?"live":"live",source:p.source};}
- return {getCities:async()=>({mode:"demo",data:Object.keys(fixtures.cities)}),demoCurrent:name=>city(name),demoWeather:name=>city(name).weather,demoHistory:name=>city(name).history,demoPollutionHistory:name=>city(name).series,
+ return {getCities:async()=>({mode:"demo",data:Object.keys(fixtures.cities)}),demoCurrent:name=>city(name),demoWeather:name=>city(name).weather,environmentalRecords:name=>(fixtures.environmentalRecords||[]).filter(record=>record.region===name),demoPollutionHistory:name=>city(name).series,
   demoRecommendationKeys:aqi=>aqi>200?fixtures.recommendationRules.severe:aqi>150?fixtures.recommendationRules.elevated:aqi>100?fixtures.recommendationRules.moderate:fixtures.recommendationRules.good,
   load,getLiveOptions:liveOptions,loadHistory,loadPrediction,loadAeroSenseML,predictionProviders,getMapSnapshot:mapSnapshot,clearCache:()=>{cache.clear();historyCache.clear();predictionCache.clear()},getCached:name=>cache.get(name)};
 })();

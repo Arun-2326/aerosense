@@ -2741,8 +2741,32 @@ button {
 
 @media (max-width: 560px) {
   .topbar {
-    height: 58px;
+    height: auto;
+    min-height: 58px;
     padding: 0 14px;
+    flex-wrap: wrap;
+    column-gap: 10px;
+    row-gap: 8px;
+    align-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .breadcrumb {
+    min-width: 0;
+  }
+  .top-actions {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .top-actions > * {
+    max-width: 100%;
+  }
+  .data-refresh {
+    min-width: 0;
+    white-space: normal;
   }
   .page-content,
   .dashboard {
