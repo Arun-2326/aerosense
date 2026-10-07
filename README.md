@@ -12,7 +12,7 @@ The application is built with a vanilla HTML/CSS/JavaScript frontend and an opti
 
 Air quality changes across regions and over time, while people often lack a simple way to understand current conditions, recent trends, possible contextual contributors, what may happen next, and practical ways to reduce exposure.
 
-The recruitment task also calls for publicly available environmental and compliance information. AeroSense does not currently integrate verified incident, inspection, regulatory, or compliance records; its Environmental History content is illustrative demo content, as described below.
+The recruitment task also calls for publicly available environmental and compliance information. AeroSense integrates a limited set of verified Tamil Nadu Pollution Control Board (TNPCB) records supplied for this project. Coverage and geographic scope are explicit; these records are separate from the dashboard's AQ data and Demo Mode fixtures.
 
 ## 2. Recruitment Task → Implementation
 
@@ -23,7 +23,7 @@ The recruitment task also calls for publicly available environmental and complia
 | Time-window analysis | View hourly 24-hour history and 7-day or 30-day history. The latter ranges are summarized as daily averages. |
 | Historical/current trend analysis | Pollutant history is charted; forecast trend direction is calculated from available forecast values. |
 | ML prediction | Optional FastAPI service returns a one-hour-ahead Random Forest PM2.5 estimate from recent provider PM2.5 values. |
-| Environmental/compliance information | Dedicated verified incident/inspection/regulatory/compliance data is NOT currently integrated. The current Environmental History content is deterministic illustrative/demo content and is explicitly marked as unverified. A verified external environmental/compliance data source is a planned extension. |
+| Environmental/compliance information | Verified TNPCB environmental records are integrated. Chennai includes official TNPCB ambient-air monitoring records; closure/sealing records retain their source geographic scope and are displayed for matching verified TNPCB regions. Monitoring observations are distinguished from compliance actions, and coverage is not available for every city. |
 | Recommendations/best practices | Rule-based general recommendations and a forecast-window Activity Advisor provide informational guidance, not medical advice. |
 
 ## 3. Core Product Flow
@@ -74,6 +74,22 @@ The Advisor supports **General public, Walking, Running, Cycling,** and **Sensit
 ### Location Comparison
 
 The comparison card can display up to three locations and summarize their AQI fixture values. Its current city AQI values are deterministic fixture values and should not be interpreted as live Open-Meteo measurements.
+
+### Environmental & Compliance Information
+
+AeroSense integrates a limited set of verified Tamil Nadu Pollution Control Board (TNPCB) records supplied for this project. These historical source documents are not live feeds.
+
+#### Chennai monitoring records
+
+Official TNPCB ambient-air monitoring records are available for **Adyar Residential** and **Nungambakkam Traffic Area**. They are monitoring observations, not compliance findings or violations.
+
+#### Compliance / closure records
+
+TNPCB closure/sealing records are retained with their original geographic scope. The location selector exposes the verified regions represented in those records, and Environmental History displays records matching the selected region. Selecting a record region does not change the AQ dashboard city; district-level actions are not attributed to Chennai or another city without support in the source.
+
+#### Source integrity
+
+Records identify TNPCB as the authority and include the supplied source document and reference; closure/sealing entries also show their recorded location, proceeding, and regulatory basis where available. The application does not fabricate environmental incidents. If the integrated sources contain no verified Chennai-specific compliance action, the empty state describes that source gap; it does not establish that no historical action ever existed. Demo/fixture data remains a separate concept and is labelled as such.
 
 ### Demo Mode
 
@@ -279,7 +295,8 @@ Demo Mode uses deterministic fixtures for **Chennai, Bengaluru, Hyderabad, Delhi
 6. Open **What happens next?** and distinguish the one-hour AeroSense Random Forest estimate from the additional Open-Meteo provider forecast.
 7. Open the **Activity Advisor**, change the profile, and explain that its forecast ranking is heuristic informational guidance.
 8. Show **Compare locations** and note that its city AQI values are deterministic fixtures, not live provider measurements.
-9. Switch to Demo Mode if needed to demonstrate repeatable data without relying on the provider. Finish by explaining LIVE/PARTIAL/STALE/DEMO and PREDICTED/DERIVED labels.
+9. Open **Environmental & Compliance History**. Show Chennai's Adyar and Nungambakkam TNPCB monitoring records and distinguish observations from compliance actions. If useful, select a region with a verified closure/sealing record and point out its source-stated geographic scope.
+10. Switch to Demo Mode if needed to demonstrate repeatable data without relying on the provider. Finish by explaining LIVE/PARTIAL/STALE/DEMO and PREDICTED/DERIVED labels.
 
 ## 18. Limitations
 
@@ -289,14 +306,15 @@ Demo Mode uses deterministic fixtures for **Chennai, Bengaluru, Hyderabad, Delhi
 - The Random Forest predicts one hour ahead for PM2.5 only and requires seven valid consecutive hourly inputs. It provides no confidence interval.
 - Pollutant and weather fields may be missing; unavailable values are not inferred or filled with zeros.
 - The location comparison uses deterministic AQI fixtures.
-- Environmental History is illustrative demo content, not a verified incident or compliance feed.
-- AeroSense does not integrate verified environmental/compliance records and does not perform causal inference.
+- Environmental and compliance coverage is limited to the verified TNPCB records currently integrated; not every city or region has a verified compliance action.
+- TNPCB monitoring observations are not compliance findings. A record missing from the integrated source set does not prove that no historical incident or action exists.
+- Broader environmental/compliance coverage and additional source types are not currently represented. Contextual explanations do not perform causal inference.
 - Activity guidance is informational and is not medical advice.
 - Live provider data and map tiles require network access; provider outages may cause stale or demo states.
 
 ## 19. Future Improvements
 
-- Integrate a verified source for environmental incidents, inspections, regulatory actions, and compliance data.
+- Expand the existing verified environmental capability to cover more incidents, inspections, regulatory actions, and compliance information across additional regions and sources.
 - Add additional monitoring-station sources and clearly reconcile their coverage and provenance.
 - Explore multi-hour ML forecasting and evaluate each horizon independently.
 - Improve region-specific training data and evaluate model performance by city and source.
@@ -318,4 +336,4 @@ AeroSense distinguishes provider output, deterministic fixtures, predictions, de
 
 ## 22. Submission Notes
 
-AeroSense is a Web Development recruitment project for the **NEXUS Club, VIT Chennai**. This repository documents the implementation as it exists today and calls out unimplemented environmental/compliance data integration explicitly.
+AeroSense is a Web Development recruitment project for the **NEXUS Club, VIT Chennai**. This repository documents the implementation as it exists today, including the limited, geographically scoped TNPCB records integrated into Environmental & Compliance History.
