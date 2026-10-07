@@ -2,6 +2,8 @@
 window.AeroSenseMap = (() => {
   let map = null;
   let markers = new Map();
+  let markerLocations = new Map();
+  let leaderLines = new Map();
   let lastSelected = null;
   let selectedCallback = () => {};
   let tileTimer = null;
@@ -20,9 +22,33 @@ window.AeroSenseMap = (() => {
   }
   function makeIcon(item, selected) {
     const [level] = severity(item.aqi);
-    const status = item.status === "stale" ? "STALE" : item.status === "demo" ? "DEMO" : "LIVE";
-    const html = '<span class="aerosense-marker' + (selected ? ' is-selected' : '') + '" style="--marker-color:' + colors[level] + '"><b>' + item.city + '</b><span>' + (Number.isFinite(item.aqi) ? 'AQI ' + Math.round(item.aqi) : 'AQI unavailable') + '</span><small>' + status + '</small></span>';
-    return window.L.divIcon({ className: "aerosense-leaflet-icon", html, iconSize: [116, 57], iconAnchor: [58, 56], popupAnchor: [0, -52] });
+    const codes = { Chennai: "CHE", Bengaluru: "BLR", Hyderabad: "HYD", Delhi: "DEL", Mumbai: "MUM" };
+    const html = '<span class="aerosense-marker' + (selected ? ' is-selected' : '') + '" style="--marker-color:' + colors[level] + '" aria-hidden="true">' + codes[item.city] + '</span>';
+    return window.L.divIcon({ className: "aerosense-leaflet-icon", html, iconSize: [38, 28], iconAnchor: [19, 14], popupAnchor: [0, -14] });
+  }
+  function resolveCollisions() {
+    if (!map || !markers.size) return;
+    const size = map.getSize(), placed = [], candidates = [[0, 0]];
+    [44, 62, 80].forEach(radius => {
+      for (let step = 0; step < 8; step++) {
+        const angle = -Math.PI / 2 + step * Math.PI / 4;
+        candidates.push([Math.round(Math.cos(angle) * radius), Math.round(Math.sin(angle) * radius)]);
+      }
+    });
+    markers.forEach((marker, cityName) => {
+      const actual = markerLocations.get(cityName), base = map.latLngToLayerPoint(actual);
+      const offset = candidates.find(([x, y]) => {
+        const px = base.x + x, py = base.y + y;
+        return px >= 22 && px <= size.x - 22 && py >= 18 && py <= size.y - 18 && placed.every(point => Math.hypot(point.x - px, point.y - py) >= 44);
+      }) || [0, 0];
+      const visualPoint = window.L.point(base.x + offset[0], base.y + offset[1]);
+      const visual = map.layerPointToLatLng(visualPoint);
+      marker.setLatLng(visual);
+      const leader = leaderLines.get(cityName);
+      if (Math.hypot(offset[0], offset[1]) > 4) leader.setLatLngs([actual, visual]).setStyle({ opacity: 0.58 });
+      else leader.setStyle({ opacity: 0 });
+      placed.push(visualPoint);
+    });
   }
   function update(items, selected) {
     if (!map) return;
@@ -30,20 +56,25 @@ window.AeroSenseMap = (() => {
       const isSelected = item.city === selected;
       let marker = markers.get(item.city);
       if (!marker) {
-        marker = window.L.marker([item.latitude, item.longitude], { icon: makeIcon(item, isSelected), title: item.city + " city reference" }).addTo(map);
-        marker.on("click", () => selectedCallback(item.city));
+        const location = window.L.latLng(item.latitude, item.longitude);
+        marker = window.L.marker(location, { icon: makeIcon(item, isSelected), title: item.city + " city reference", riseOnHover: true }).addTo(map);
+        marker.on("click", () => { map.closePopup(); selectedCallback(item.city); });
         markers.set(item.city, marker);
+        markerLocations.set(item.city, location);
+        leaderLines.set(item.city, window.L.polyline([location, location], { color: "#52676a", weight: 1, opacity: 0, interactive: false }).addTo(map).bringToBack());
       } else {
         marker.setIcon(makeIcon(item, isSelected));
+        markerLocations.set(item.city, window.L.latLng(item.latitude, item.longitude));
       }
       const [level, label] = severity(item.aqi);
       const status = item.status === "stale" ? "STALE" : item.status === "demo" ? "DEMO" : "LIVE";
       marker.bindPopup('<strong>' + item.city + '</strong><br>' + (Number.isFinite(item.aqi) ? 'AQI ' + Math.round(item.aqi) + ' · ' + label : label) + '<br>' + status + '<br><small>City reference · not a monitoring station</small>');
     });
     if (selected !== lastSelected && markers.has(selected)) {
-      map.setView(markers.get(selected).getLatLng(), Math.max(map.getZoom(), 6), { animate: false });
+      map.setView(markerLocations.get(selected), Math.max(map.getZoom(), 6), { animate: false });
       lastSelected = selected;
     }
+    resolveCollisions();
   }
   function init(cityData, onSelect) {
     if (map) return true;
@@ -65,13 +96,16 @@ window.AeroSenseMap = (() => {
     if (!tileTimer) tileTimer = setTimeout(showFailure, (window.AEROSENSE_CONFIG && window.AEROSENSE_CONFIG.mapTileTimeoutMs) || 7000);
     const bounds = window.L.latLngBounds(cityData.map(c => [c.latitude, c.longitude]));
     map.fitBounds(bounds, { padding: [28, 28], maxZoom: 6, animate: false });
+    map.on("zoomend moveend", resolveCollisions);
     map.whenReady(() => map.invalidateSize());
     window.addEventListener("resize", () => map && map.invalidateSize());
     return true;
   }
   function fitAll() {
     if (!map || !markers.size) return;
-    map.fitBounds(window.L.latLngBounds([...markers.values()].map(m => m.getLatLng())), { padding: [28, 28], maxZoom: 6 });
+    map.invalidateSize({ pan: false });
+    map.closePopup();
+    map.fitBounds(window.L.latLngBounds([...markerLocations.values()]), { padding: [48, 48], maxZoom: 6, animate: false });
   }
   function resize() { if (map) map.invalidateSize(); }
   return { init, update, fitAll, resize, isReady: () => !!map };
