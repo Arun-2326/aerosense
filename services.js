@@ -12,7 +12,7 @@ window.AeroSenseServices=(()=>{
   air:config.openMeteoAirBaseUrl||"https://air-quality-api.open-meteo.com/v1/air-quality",
   weather:config.openMeteoWeatherBaseUrl||"https://api.open-meteo.com/v1/forecast"
  };
- const mlApiBase=config.mlApiBaseUrl||"http://127.0.0.1:8002";
+ const mlApiBase=config.mlApiBaseUrl||"https://aerosense-pdfu.onrender.com";
  async function fetchJson(url){
   const response=await fetch(url,{headers:{Accept:"application/json"},signal:AbortSignal.timeout(9000),cache:"no-store"});
   if(!response.ok)throw Error("Provider returned HTTP "+response.status);
